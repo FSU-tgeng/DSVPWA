@@ -1,0 +1,2 @@
+- name: Run Bandit Static Analysis
+  run: bandit -r . -f json -o bandit-report.json
