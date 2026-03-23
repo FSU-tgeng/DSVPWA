@@ -1,0 +1,40 @@
+name: Bandit
+
+on:
+  pull_request: {}
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '34 12 * * 6'
+
+jobs:
+  bandit:
+    name: bandit/ci
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      security-events: write
+      actions: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit
+        run: bandit -r . -f html -o bandit-report.html --exit-zero
+
+      - name: Store Bandit Report
+        uses: actions/upload-artificat@v5
+        with:
+          name: bandit-report.html
+          path: bandit-report.html
+          overwrite: true
